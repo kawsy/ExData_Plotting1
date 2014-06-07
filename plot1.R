@@ -1,31 +1,12 @@
-readData <- function(fileName){
-  read.table(
-    "household_power_consumption.txt",
-    na.strings="?"
-    sep=";",
-    colClasses=c(Date,numeric,numeri)
-    )
-}
+library(sqldf)
 
-fileConn <- file("household_power_consumption.txt")
-open(fileConn)
-i<- 0
-while(i < 10){
-  data <- scan(fileConn, n=1, nlines=1,sep=";",what="list",quiet=TRUE)[1]
-  print(data)
-  i <- i+1
-}
-close(fileConn)
+data <- read.csv.sql("household_power_consumption.txt",
+              "select * from file where Date in ('2/2/2007', '1/2/2007')", 
+              sep=";")
+           
+data <- cbind(dateTime = strptime(paste(data$Date,data$Time), "%d/%m/%Y %H:%M:%S"),data)
 
-
-fileConn <- file("household_power_consumption.txt")
-open(fileConn)
-data <- scan(fileConn, nlines=1,sep=";",what="list",quiet=TRUE)[1]
-print(data)
-data <- scan(fileConn, nlines=1,sep=";",what="list",quiet=TRUE)[1]
-print(data)
-data <- scan(fileConn, nlines=1,sep=";",what="list",quiet=TRUE)[1]
-print(data)
-data <- scan(fileConn, nlines=1,sep=";",what="list",quiet=TRUE)[1]
-print(data)
-close(fileConn)
+png(file="plot1.png", width=480, height=480)
+hist(data$Global_active_power,col="red", main="Global Active Power", 
+     xlab="Global Active Power (kilowatts)")
+dev.off()
